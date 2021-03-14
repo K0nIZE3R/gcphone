@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import { generateColorForStr } from '@/Utils'
 import List from './../List.vue'
 import Modal from '@/components/Modal/index.js'
@@ -30,31 +30,56 @@ export default {
     }
   },
   methods: {
+    ...mapActions(['startCall']),
     onSelect (contact) {
-      if (contact.id === -1) {
-        this.$router.push({ name: 'contacts.view', params: { id: contact.id } })
-      } else {
-        this.$router.push({ name: 'messages.view', params: { number: contact.number, display: contact.display } })
-      }
-    },
-    onOption (contact) {
-      if (contact.id === -1 || contact.id === undefined) return
       this.disableList = true
-      Modal.CreateModal({
-        choix: [
-          {id: 1, title: this.IntlString('APP_CONTACT_EDIT'), icons: 'fa-circle-o', color: 'orange'},
-          {id: 3, title: 'Annuler', icons: 'fa-undo'}
+
+      if (contact.num === '') {
+        this.$router.push({ path: 'contact/' + contact.id })
+      } else {
+        let choix = [
+          {id: 0, title: this.IntlString('APP_PHONE_CALL'), icons: 'fa-phone'},
+          {id: 1, title: this.IntlString('APP_PHONE_CALL_ANONYMOUS'), icons: 'fa-mask'},
+          {id: 2, title: this.IntlString('APP_MESSAGE_NEW_MESSAGE'), icons: 'fa-sms'}
         ]
-      }).then(rep => {
-        if (rep.id === 1) {
-          this.$router.push({path: 'contact/' + contact.id})
+
+        if (contact.id !== -1 && contact.id !== undefined) {
+          choix = [
+            {id: 0, title: this.IntlString('APP_PHONE_CALL'), icons: 'fa-phone'},
+            {id: 1, title: this.IntlString('APP_PHONE_CALL_ANONYMOUS'), icons: 'fa-mask'},
+            {id: 2, title: this.IntlString('APP_MESSAGE_NEW_MESSAGE'), icons: 'fa-sms'},
+            {id: 3, title: this.IntlString('APP_CONTACT_EDIT'), icons: 'fa-edit', color: 'orange'},
+            {id: 4, title: this.IntlString('APP_CONTACT_DELETE'), icons: 'fa-user-times', color: 'red'},
+            {id: 5, title: this.IntlString('APP_CONTACT_CANCEL'), icons: 'fa-undo'}
+          ]
         }
-        this.disableList = false
-      })
+
+        Modal.CreateModal({choix}).then(rep => {
+          switch (rep.id) {
+            case 0:
+              this.startCall({ numero: contact.number })
+              break
+            case 1:
+              this.startCall({ numero: '#' + contact.number })
+              break
+            case 2:
+              this.$router.push({ name: 'messages.view', params: contact })
+              break
+            case 3:
+              this.$router.push({ path: 'contact/' + contact.id })
+              break
+            case 4:
+              this.$phoneAPI.deleteContact(contact.id)
+              break
+          }
+
+          this.disableList = false
+        })
+      }
     },
     back () {
       if (this.disableList === true) return
-      this.$router.push({ name: 'home' })
+      this.$router.go(-1)
     }
   },
   created () {

@@ -3,6 +3,8 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+
 export default {
   data () {
     return {
@@ -10,15 +12,12 @@ export default {
       myInterval: 0
     }
   },
+  computed: {
+    ...mapGetters(['currentTime'])
+  },
   methods: {
     updateTime: function () {
-      var time = new Date()
-      var minutes = time.getMinutes()
-      minutes = minutes > 9 ? minutes : '0' + minutes
-      var heure = time.getHours()
-      heure = heure > 9 ? heure : '0' + heure
-      var datestring = heure + ':' + minutes
-      this.time = datestring
+      this.time = this.currentTime
     }
   },
   created: function () {

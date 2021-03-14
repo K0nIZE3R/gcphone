@@ -4,30 +4,35 @@ import Router from 'vue-router'
 import Home from '@/components/Home'
 import Menu from '@/components/Menu'
 
-import Contacts from '@/components/contacts/Contacts'
-import Contact from '@/components/contacts/Contact'
+import Notes from '@/components/Notes/Notes'
 
-import MessagesList from '@/components/messages/MessagesList'
-import Messages from '@/components/messages/Messages'
-import MessageContactsSelect from '@/components/messages/MessageContactsSelect'
+import Contacts from '@/components/Contacts/Contacts'
+import Contact from '@/components/Contacts/Contact'
 
-import Appels from '@/components/Appels/Appels'
-import AppelsActive from '@/components/Appels/AppelsActive'
-import AppelsNumber from '@/components/Appels/AppelsNumber'
+import KeyChain from '@/components/KeyChain/KeyChain'
 
-import TchatSplashScreen from '@/components/Tchat/TchatSplashScreen'
-import TchatChannel from '@/components/Tchat/TchatChannel'
-import TchatMessage from '@/components/Tchat/TchatMessage'
+import MessagesList from '@/components/Messages/MessagesList'
+import Messages from '@/components/Messages/Messages'
+import MessageContactsSelect from '@/components/Messages/MessageContactsSelect'
 
-import TwitterSpashScreen from '@/components/twitter/TwitterSpashScreen'
-import TwitterScreen from '@/components/twitter/TwitterScreen'
+import Phone from '@/components/Phone/Phone'
+import PhoneCall from '@/components/Phone/PhoneCall'
+import PhoneDialer from '@/components/Phone/PhoneDialer'
 
-import Parametre from '@/components/parametre/Parametre'
+import Reddit from '@/components/Reddit/Reddit'
+import RedditChannel from '@/components/Reddit/RedditChannel'
+
+import TwitterScreen from '@/components/Twitter/TwitterScreen'
+
+import Settings from '@/components/Settings/Settings'
 import Bank from '@/components/Bank/Bank'
-import Bourse from '@/components/Bourse/Bourse'
-import Photo from '@/components/Photo/Photo'
+import StockMarket from '@/components/StockMarket/StockMarket'
+import Camera from '@/components/Camera/Camera'
+import Gallery from '@/components/Gallery/Gallery'
+import GalleryContacts from '@/components/Gallery/GalleryContacts'
+import Skills from '@/components/Skills/Skills'
 
-import App9GAG from '@/components/App9GAG'
+import App9GAG from '@/components/App9GAG/App9GAG'
 
 Vue.use(Router)
 
@@ -49,7 +54,12 @@ export default new Router({
       component: Contacts
     },
     {
-      path: '/contact/:id/:number?',
+      path: '/keychain',
+      name: 'keychain',
+      component: KeyChain
+    },
+    {
+      path: '/contact/:id',
       name: 'contacts.view',
       component: Contact
     },
@@ -68,53 +78,61 @@ export default new Router({
       name: 'messages.view',
       component: Messages
     }, {
-      path: '/bourse',
-      name: 'bourse',
-      component: Bourse
+      path: '/stockmarket',
+      name: 'stockmarket',
+      component: StockMarket
     }, {
       path: '/bank',
       name: 'bank',
       component: Bank
     }, {
-      path: '/photo',
-      name: 'photo',
-      component: Photo
+      path: '/camera',
+      name: 'camera',
+      component: Camera
     }, {
-      path: '/paramtre',
-      name: 'parametre',
-      component: Parametre
+      path: '/gallery',
+      name: 'gallery',
+      component: Gallery
+    }, {
+      path: '/gallerycontacts',
+      name: 'gallery.contacts',
+      component: GalleryContacts
+    }, {
+      path: '/skills',
+      name: 'skills',
+      component: Skills
+    }, {
+      path: '/settings',
+      name: 'settings',
+      component: Settings
     }, {
       path: '/appels',
       name: 'appels',
-      component: Appels
+      component: Phone
     }, {
       path: '/appelsactive',
       name: 'appels.active',
-      component: AppelsActive
+      component: PhoneCall
     }, {
       path: '/appelsNumber',
       name: 'appels.number',
-      component: AppelsNumber
+      component: PhoneDialer
     }, {
-      path: '/tchatsplash',
-      name: 'tchat',
-      component: TchatSplashScreen
+      path: '/reddit',
+      name: 'reddit',
+      component: Reddit
     }, {
-      path: '/tchat',
-      name: 'tchat.channel',
-      component: TchatChannel
-    }, {
-      path: '/tchat/:channel',
-      name: 'tchat.channel.show',
-      component: TchatMessage
-    }, {
-      path: '/twitter/splash',
-      name: 'twitter.splash',
-      component: TwitterSpashScreen
+      path: '/reddit/:channel',
+      name: 'reddit.channel',
+      component: RedditChannel
     }, {
       path: '/twitter/view',
       name: 'twitter.screen',
       component: TwitterScreen
+    }, {
+      path: '/notes',
+      name: 'notes',
+      component: Notes
     }, {
       path: '/9gag',
       name: '9gag',

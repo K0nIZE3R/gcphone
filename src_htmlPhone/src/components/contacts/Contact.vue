@@ -1,30 +1,28 @@
 <template>
   <div class="phone_app">
-    <PhoneTitle :title="contact.display" @back="forceCancel"/>  
+    <PhoneTitle :title="contact.display && 'Contact: ' + contact.display || 'Contact: New Contact'" @back="forceCancel"/>
     <div class='phone_content content inputText'>
-        
-        <div class="group select" data-type="text" data-model='display' data-maxlength = '64'>      
-            <input type="text" v-model="contact.display" maxlength="64" v-autofocus>
-            <span class="highlight"></span>
-            <span class="bar"></span>
-            <label>{{ IntlString('APP_CONTACT_LABEL_NAME') }}</label>
-        </div>
-        
-        <div class="group inputText" data-type="text" data-model='number' data-maxlength='10'>      
-            <input type="text" v-model="contact.number" maxlength="10">
-            <span class="highlight"></span>
-            <span class="bar"></span>
-            <label>{{ IntlString('APP_CONTACT_LABEL_NUMBER') }}</label>
-        </div>
-        <div style="margin-top: 56px;" class="group " data-type="button" data-action='save' @click.stop="save">      
-            <input type='button' class="btn btn-green" :value="IntlString('APP_CONTACT_SAVE')" @click.stop="save"/>
-        </div>
-        <div class="group" data-type="button" data-action='cancel' @click.stop="forceCancel">      
-            <input type='button' class="btn btn-orange" :value="IntlString('APP_CONTACT_CANCEL')" @click.stop="forceCancel"/>
-        </div>
-        <div class="group" data-type="button" data-action='deleteC' @click.stop="deleteC">      
-            <input type='button' class="btn btn-red" :value="IntlString('APP_CONTACT_DELETE')" @click.stop="deleteC"/>
-        </div>
+      <div class="group select" data-type="text" data-model='display' data-maxlength = '64'>
+        <input type="text" v-model="contact.display" maxlength="64" v-autofocus>
+        <span class="highlight"></span>
+        <span class="bar"></span>
+        <label>{{ IntlString('APP_CONTACT_LABEL_NAME') }}</label>
+      </div>
+
+      <div class="group inputText" data-type="text" data-model='number' data-maxlength='10'>
+        <input type="text" v-model="contact.number" maxlength="10">
+        <span class="highlight"></span>
+        <span class="bar"></span>
+        <label>{{ IntlString('APP_CONTACT_LABEL_NUMBER') }}</label>
+      </div>
+
+      <div style="margin-top: 56px;" class="group " data-type="button" data-action='save' @click.stop="save">
+        <input type='button' class="btn btn-green" :value="IntlString('APP_CONTACT_SAVE')" @click.stop="save"/>
+      </div>
+
+      <div class="group" data-type="button" data-action='cancel' @click.stop="forceCancel">
+        <input type='button' class="btn btn-orange" :value="IntlString('APP_CONTACT_CANCEL')" @click.stop="forceCancel"/>
+      </div>
     </div>
   </div>
 </template>
@@ -32,7 +30,6 @@
 <script>
 import { mapGetters, mapActions } from 'vuex'
 import PhoneTitle from './../PhoneTitle'
-import Modal from '@/components/Modal/index.js'
 
 export default {
   components: {
@@ -100,14 +97,14 @@ export default {
       }
     },
     save () {
-      if (this.id === -1 || this.id === 0) {
-        this.addContact({
+      if (this.id !== -1) {
+        this.updateContact({
+          id: this.id,
           display: this.contact.display,
           number: this.contact.number
         })
       } else {
-        this.updateContact({
-          id: this.id,
+        this.addContact({
           display: this.contact.display,
           number: this.contact.number
         })
@@ -121,21 +118,6 @@ export default {
     },
     forceCancel () {
       history.back()
-    },
-    deleteC () {
-      if (this.id !== -1) {
-        this.ignoreControls = true
-        let choix = [{title: 'Annuler'}, {title: 'Annuler'}, {title: 'Supprimer', color: 'red'}, {title: 'Annuler'}, {title: 'Annuler'}]
-        Modal.CreateModal({choix}).then(reponse => {
-          this.ignoreControls = false
-          if (reponse.title === 'Supprimer') {
-            this.$phoneAPI.deleteContact(this.id)
-            history.back()
-          }
-        })
-      } else {
-        history.back()
-      }
     }
   },
   created () {
@@ -146,10 +128,11 @@ export default {
     } else {
       this.currentSelect = -1
     }
+
     this.$bus.$on('keyUpBackspace', this.cancel)
     this.id = parseInt(this.$route.params.id)
     this.contact.display = this.IntlString('APP_CONTACT_NEW')
-    this.contact.number = this.$route.params.number
+
     if (this.id !== -1) {
       const c = this.contacts.find(e => e.id === this.id)
       if (c !== undefined) {
@@ -158,6 +141,12 @@ export default {
           display: c.display,
           number: c.number
         }
+      }
+    } else {
+      let number = this.$route.params.number
+
+      if (number) {
+        this.contact = {number: number}
       }
     }
   },
@@ -190,13 +179,13 @@ export default {
     margin: 6px 10px;
     margin-top: 28px;
 }
-.group { 
-  position:relative; 
-  margin-top:24px; 
+.group {
+  position:relative;
+  margin-top:24px;
 }
-.group.inputText { 
-  position:relative; 
-  margin-top:45px; 
+.group.inputText {
+  position:relative;
+  margin-top:45px;
 }
 input 				{
   font-size:24px;
@@ -209,15 +198,15 @@ input:focus 		{ outline:none; }
 
 /* LABEL ======================================= */
 label 				 {
-  color:#999; 
+  color:#999;
   font-size:18px;
   font-weight:normal;
   position:absolute;
   pointer-events:none;
   left:5px;
   top:10px;
-  transition:0.2s ease all; 
-  -moz-transition:0.2s ease all; 
+  transition:0.2s ease all;
+  -moz-transition:0.2s ease all;
   -webkit-transition:0.2s ease all;
 }
 
@@ -232,20 +221,20 @@ input:focus ~ label, input:valid ~ label 		{
 .bar 	{ position:relative; display:block; width:100%; }
 .bar:before, .bar:after 	{
   content:'';
-  height:3px; 
+  height:3px;
   width:0;
-  bottom:1px; 
+  bottom:1px;
   position:absolute;
-  background:#5264AE; 
-  transition:0.2s ease all; 
-  -moz-transition:0.2s ease all; 
+  background:#5264AE;
+  transition:0.2s ease all;
+  -moz-transition:0.2s ease all;
   -webkit-transition:0.2s ease all;
 }
 .bar:before {
   left:50%;
 }
 .bar:after {
-  right:50%; 
+  right:50%;
 }
 
 /* active state */
@@ -257,9 +246,9 @@ input:focus ~ .bar:before, input:focus ~ .bar:after,
 /* HIGHLIGHTER ================================== */
 .highlight {
   position:absolute;
-  height:60%; 
-  width:100px; 
-  top:25%; 
+  height:60%;
+  width:100px;
+  top:25%;
   left:0;
   pointer-events:none;
   opacity:0.5;

@@ -32,21 +32,23 @@ export default {
   methods: {
     onSelect (contact) {
       if (contact.num === -1) {
-        Modal.CreateTextModal({
-          title: this.IntlString('APP_PHONE_ENTER_NUMBER'),
-          limit: 10
-        }).then(data => {
-          let message = data.text.trim()
-          if (message !== '') {
-            this.$router.push({
-              name: 'messages.view',
-              params: {
-                number: message,
-                display: message
-              }
-            })
-          }
-        })
+        try {
+          Modal.CreateTextModal({
+            title: this.IntlString('APP_PHONE_ENTER_NUMBER'),
+            limit: 10
+          }).then(data => {
+            let message = data.text.trim()
+            if (message !== '') {
+              this.$router.push({
+                name: 'messages.view',
+                params: {
+                  number: message,
+                  display: message
+                }
+              })
+            }
+          })
+        } catch (e) {}
       } else {
         this.$router.push({name: 'messages.view', params: contact})
       }

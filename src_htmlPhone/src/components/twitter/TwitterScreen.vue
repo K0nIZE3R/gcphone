@@ -81,7 +81,7 @@ export default {
     },
     quit () {
       if (this.currentScreenIndex === 0) {
-        this.$router.push({ name: 'home' })
+        this.$router.go(-2)
       } else {
         this.currentScreenIndex = 0
       }

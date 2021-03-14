@@ -66,6 +66,7 @@ export default {
 if (process.env.NODE_ENV !== 'production') {
   const time = new Date().getTime()
   const numRandom = '' + Math.floor(Math.random() * 10000000)
+
   state.messages = [
     {id: 0, transmitter: '0000', receiver: '06', time: time - 160, message: '#666-123', isRead: 1, owner: 0},
     {id: 1, transmitter: numRandom, receiver: '06', time: time - 160, message: 'Salut sa va ?!!!', isRead: 1, owner: 0},

@@ -1,34 +1,28 @@
---====================================================================================
---  Function APP BANK
---====================================================================================
-
---[[
-      Appeller SendNUIMessage({event = 'updateBankbalance', banking = xxxx})
-      à la connection & à chaque changement du compte
---]]
-
--- ESX Implementation
-
-local bank = 0
-function setBankBalance (value)
-      bank = value
-      SendNUIMessage({event = 'updateBankbalance', banking = bank})
-end
+Citizen.CreateThread(function()
+	Citizen.Wait(500)
+	local initialAccounts = ESX.Player.GetAccounts()
+	if initialAccounts.bank then setBankBalance(initialAccounts.bank.money) end
+end)
 
 RegisterNetEvent('esx:playerLoaded')
 AddEventHandler('esx:playerLoaded', function(playerData)
-      local accounts = playerData.accounts or {}
-      for index, account in ipairs(accounts) do 
-            if account.name == 'bank' then
-                  setBankBalance(account.money)
-                  break
-            end
-      end
+	if playerData.accounts.bank then setBankBalance(playerData.accounts.bank.money) end
 end)
 
 RegisterNetEvent('esx:setAccountMoney')
 AddEventHandler('esx:setAccountMoney', function(account)
-      if account.name == 'bank' then
-            setBankBalance(account.money)
-      end
+	if account.name == 'bank' then setBankBalance(account.money) end
 end)
+
+AddEventHandler('gcphone:bankTransfer', function(data)
+	local coords = GetEntityCoords(PlayerPedId())
+
+	if exports.gcphone:mastCheck(coords) then
+		TriggerServerEvent('phone:banktransfer', data.id, data.amount)
+		--Event to update balance on phone?
+	else
+		ESX.ShowNotification('You do not have a cellular connection')
+	end
+end)
+
+function setBankBalance(value) SendNUIMessage({event = 'updateBankbalance', banking = value}) end

@@ -1,5 +1,9 @@
 # src_htmlphone
 
+Use NPM 6.9.0 with Node v12
+
+https://nodejs.org/download/release/v12.6.0/node-v12.6.0-x64.msi works
+
 > A Vue.js project
 
 ## Build Setup
@@ -19,3 +23,8 @@ npm run build --report
 ```
 
 For detailed explanation on how things work, checkout the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
+
+
+If you get `npm ERR! Cannot destructure property `name` of 'undefined' or 'null'.` error run the following to downgrade npm to v6
+
+`npm i -g npm@6`

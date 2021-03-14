@@ -69,8 +69,9 @@ const actions = {
       Vue.notify({
         message: tweet.message,
         title: tweet.author + ' :',
-        icon: 'twitter',
-        sound: state.twitterNotificationSound ? 'Twitter_Sound_Effect.ogg' : undefined
+        icon: 'fab fa-twitter',
+        sound: state.twitterNotificationSound ? 'Twitter_Sound_Effect.ogg' : undefined,
+        duration: 6000
       })
     }
     commit('ADD_TWEET', { tweet })
@@ -142,64 +143,64 @@ export default {
 }
 
 if (process.env.NODE_ENV !== 'production') {
+  state.tweets = [{
+    id: 1,
+    message: 'Test 1',
+    author: 'Test User 1',
+    time: '2021-02-09 14:10',
+    likes: 3,
+    isLikes: 60
+  },
+  {
+    id: 2,
+    message: 'Test 2',
+    author: 'Test User 2',
+    time: '2021-02-09 14:18',
+    likes: 3,
+    isLikes: 60
+  },
+  {
+    id: 3,
+    message: 'Test 3',
+    author: 'Test User 3',
+    time: '2021-02-09 14:12',
+    likes: 3,
+    isLikes: 60
+  },
+  {
+    id: 4,
+    message: 'Test 4',
+    author: 'Test User 4',
+    time: '2021-02-09 14:13',
+    likes: 3,
+    isLikes: 60
+  }]
+
   state.favoriteTweets = [{
     id: 1,
     message: 'https://pbs.twimg.com/profile_images/702982240184107008/tUKxvkcs_400x400.jpg',
-    author: 'Gannon',
-    time: new Date(),
+    author: 'I am from 2020-12-05',
+    time: '2020-12-05',
     likes: 3,
     isLikes: 60
   }, {
     id: 2,
-    message: 'Borderlands 3 arrives on Xbox One, PS4, and PC on September 13, 2019! Tune in to the Gameplay Reveal Event on May 1st, where we’ll debut the first hands-on looks! Pre-order now to get the Gold Weapon Skins Pack! ➜ https://borderlands.com  ',
-    author: 'Gearbox Official',
+    message: 'I am from 2020-12-03',
+    author: 'test 2',
     authorIcon: 'https://pbs.twimg.com/profile_images/702982240184107008/tUKxvkcs_400x400.jpg',
-    time: new Date(),
+    time: '2020-12-03',
     likes: 65
   }, {
     id: 3,
-    message: '',
-    img: 'https://cdn.discordapp.com/attachments/563443658192322576/563473765569396746/samurai-background-hd-1920x1200-45462.jpg',
-    author: 'Gannon',
-    time: new Date()
+    message: 'https://cdn.discordapp.com/attachments/563443658192322576/563473765569396746/samurai-background-hd-1920x1200-45462.jpg',
+    author: 'test 3',
+    time: '2020-10-05'
   }, {
     id: 4,
-    message: 'Super Message de la mort.',
-    author: 'Gannon',
+    message: 'I am from 2020-05-05',
+    author: 'test 4',
     authorIcon: 'https://pbs.twimg.com/profile_images/986085090684960768/AcD9lOLw_bigger.jpg',
     likes: 0,
-    time: new Date()
-  },
-  {
-    id: 5,
-    message: 'Super Message de la mort.',
-    author: 'Gannon',
-    authorIcon: 'https://pbs.twimg.com/profile_images/986085090684960768/AcD9lOLw_bigger.jpg',
-    likes: 0,
-    time: new Date()
-  },
-  {
-    id: 6,
-    message: 'Super Message de la mort.',
-    author: 'Gannon',
-    authorIcon: 'https://pbs.twimg.com/profile_images/986085090684960768/AcD9lOLw_bigger.jpg',
-    likes: 0,
-    time: new Date()
-  },
-  {
-    id: 7,
-    message: 'Super Message de la mort.',
-    author: 'Gannon',
-    authorIcon: 'https://pbs.twimg.com/profile_images/986085090684960768/AcD9lOLw_bigger.jpg',
-    likes: 0,
-    time: new Date()
-  },
-  {
-    id: 8,
-    message: 'Super Message de la mort.',
-    author: 'Gannon',
-    authorIcon: 'https://pbs.twimg.com/profile_images/986085090684960768/AcD9lOLw_bigger.jpg',
-    likes: 0,
-    time: new Date()
+    time: '2020-05-05'
   }]
 }

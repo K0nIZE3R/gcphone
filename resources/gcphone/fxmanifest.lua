@@ -1,6 +1,37 @@
-fx_version 'adamant'
-
+fx_version 'cerulean'
 game 'gta5'
+--lua54 'yes'
+
+shared_script '@rpuk/imports.lua'
+
+server_script {
+	'@mysql-async/lib/MySQL.lua',
+	'config.lua',
+	'server/server.lua',
+
+	'server/job.lua',
+	'server/reddit.lua',
+	'server/twitter.lua',
+	'server/bank.lua',
+	'server/life_invaders.lua',
+	'server/radio_masts.lua',
+	'server/anticheat.lua'
+}
+
+client_script {
+	'config.lua',
+	'client/animation.lua',
+	'client/client.lua',
+
+	'client/job.lua',
+	'client/camera.lua',
+	'client/reddit.lua',
+	'client/bank.lua',
+	'client/twitter.lua',
+	'client/life_invaders.lua',
+	'client/radio_masts.lua',
+	'datastore.lua'
+}
 
 ui_page 'html/index.html'
 
@@ -12,63 +43,16 @@ files {
 	'html/static/js/vendor.js',
 
 	'html/static/config/config.json',
-	
-	-- Coque
-	'html/static/img/coque/s8.png',
-	'html/static/img/coque/iphonex.png',
-	'html/static/img/coque/base.png',
-	'html/static/img/coque/transparent.png',
-	
-	-- Background
-	'html/static/img/background/back001.jpg',
-	'html/static/img/background/back002.jpg',
-	'html/static/img/background/back003.jpg',
-	
-	'html/static/img/icons_app/call.png',
-	'html/static/img/icons_app/contacts.png',
-	'html/static/img/icons_app/sms.png',
-	'html/static/img/icons_app/settings.png',
-	'html/static/img/icons_app/menu.png',
-	'html/static/img/icons_app/bourse.png',
-	'html/static/img/icons_app/tchat.png',
-	'html/static/img/icons_app/photo.png',
-	'html/static/img/icons_app/bank.png',
-	'html/static/img/icons_app/9gag.png',
-	'html/static/img/icons_app/twitter.png',
-	
-	'html/static/img/app_bank/logo_mazebank.jpg',
+	'html/static/sound/*.ogg',
 
-	'html/static/img/app_tchat/splashtchat.png',
-
-	'html/static/img/twitter/bird.png',
-	'html/static/img/twitter/default_profile.png',
-	'html/static/sound/Twitter_Sound_Effect.ogg',
-
-	'html/static/img/courbure.png',
-	'html/static/fonts/fontawesome-webfont.ttf',
-
-	'html/static/sound/ring.ogg',
-	'html/static/sound/ring2.ogg',
-	'html/static/sound/tchatNotification.ogg',
-	'html/static/sound/Phone_Call_Sound_Effect.ogg',
+	'html/static/img/*.png',
+	'html/static/img/apps/*.png', -- app icons
+	'html/static/img/background/*.jpg', -- backgrounds
+	'html/static/img/skins/*.png' -- skins'
 }
 
-client_script {
-	'config.lua',
-	'client/animation.lua',
-	'client/client.lua',
-
-	'client/photo.lua',
-	'client/app_tchat.lua',
-	'client/bank.lua',
-	'client/twitter.lua'
+exports {
+	'mastCheck',
+	'getStatus',
 }
 
-server_script {
-	'@mysql-async/lib/MySQL.lua',
-	'config.lua',
-	'server/server.lua',
-
-	'server/app_tchat.lua',
-	'server/twitter.lua'
-}

@@ -3,7 +3,7 @@
     <notification />
     <div v-if="show === true && tempoHide === false" :style="{zoom: zoom}" @contextmenu.stop>
       <div class="phone_wrapper">
-        <div class="phone_coque" :style="{backgroundImage: 'url(/html/static/img/coque/' + coque.value + ')'}"></div>
+        <div class="phone_coque" :style="{backgroundImage: 'url(/html/static/img/skins/' + coque.value + ')'}"></div>
         <div id="app" class="phone_screen">
           <router-view></router-view>
         </div>
@@ -14,7 +14,6 @@
 
 <script>
 import './PhoneBaseStyle.scss'
-import './assets/css/font-awesome.min.css'
 import { mapGetters, mapActions } from 'vuex'
 
 export default {
@@ -33,7 +32,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['show', 'zoom', 'coque', 'appelsInfo', 'myPhoneNumber', 'volume', 'tempoHide'])
+    ...mapGetters(['show', 'zoom', 'coque', 'ringtone', 'appelsInfo', 'myPhoneNumber', 'volume', 'tempoHide'])
   },
   watch: {
     appelsInfo (newValue, oldValue) {
@@ -44,7 +43,7 @@ export default {
         if (this.appelsInfo.initiator === true) {
           this.soundCall = new Audio('/html/static/sound/Phone_Call_Sound_Effect.ogg')
         } else {
-          this.soundCall = new Audio('/html/static/sound/ring.ogg')
+          this.soundCall = new Audio(`/html/static/sound/${this.ringtone.value}`)
         }
         this.soundCall.loop = true
         this.soundCall.volume = this.volume
@@ -91,6 +90,3 @@ export default {
   }
 }
 </script>
-
-<style lang="scss">
-</style>

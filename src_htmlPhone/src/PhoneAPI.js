@@ -1,12 +1,10 @@
 import store from '@/store'
-import VoiceRTC from './VoiceRCT'
 import Vue from 'vue'
 
 import emoji from './emoji.json'
 const keyEmoji = Object.keys(emoji)
 
-let USE_VOICE_RTC = false
-const BASE_URL = 'http://gcphone/'
+var BASE_URL = 'https://gcphone/'
 
 /* eslint-disable camelcase */
 class PhoneAPI {
@@ -20,7 +18,6 @@ class PhoneAPI {
       }
     })
     this.config = null
-    this.voiceRTC = null
     this.soundList = {}
   }
 
@@ -86,29 +83,30 @@ class PhoneAPI {
     return this.post('closePhone')
   }
   async setUseMouse (useMouse) {
-    return this.post('useMouse', useMouse)
+    if (process.env.NODE_ENV === 'production') {
+      return this.post('useMouse', useMouse)
+    }
   }
   async setGPS (x, y) {
     return this.post('setGPS', {x, y})
   }
   async takePhoto () {
-    store.commit('SET_TEMPO_HIDE', true)
-    const data = await this.post('takePhoto', { url: this.config.fileUploadService_Url, field: this.config.fileUploadService_Field })
-    store.commit('SET_TEMPO_HIDE', false)
-    return data
+    if (process.env.NODE_ENV === 'production') {
+      store.commit('SET_TEMPO_HIDE', true)
+      const data = await this.post('takePhoto')
+      store.commit('SET_TEMPO_HIDE', false)
+      return data
+    } else {
+      return {url: 'https://i.imgur.com/xJymFbI.jpg'}
+    }
   }
   async getReponseText (data) {
     if (process.env.NODE_ENV === 'production') {
       return this.post('reponseText', data || {})
     } else {
-      return {text: window.prompt()}
+      return {text: window.prompt(data.title, data.text || '')}
     }
   }
-
-  async faketakePhoto () {
-    return this.post('faketakePhoto')
-  }
-
   async callEvent (eventName, data) {
     return this.post('callEvent', {eventName, data})
   }
@@ -117,6 +115,7 @@ class PhoneAPI {
     store.dispatch('tchatReset')
     store.dispatch('resetPhone')
     store.dispatch('resetMessage')
+    store.dispatch('resetNotes')
     store.dispatch('resetContact')
     store.dispatch('resetBourse')
     store.dispatch('resetAppels')
@@ -130,12 +129,6 @@ class PhoneAPI {
       } else {
         this.config = response
       }
-      if (this.config.useWebRTCVocal === true) {
-        this.voiceRTC = new VoiceRTC(this.config.RTCConfig)
-        USE_VOICE_RTC = true
-      }
-      // console.log('JS USE RTC', this.config.useWebRTCVocal)
-      this.notififyUseRTC(this.config.useWebRTCVocal)
     }
     return this.config
   }
@@ -156,11 +149,26 @@ class PhoneAPI {
     this.post('tchat_addMessage', { channel, message })
   }
 
+  // Key Chain
+  async keyChainGive (plate) {
+    this.post('giveVehicleKey', { plate })
+  }
+
+  async keyChainRemove (plate) {
+    this.post('removeVehicleKey', { plate })
+  }
+
   // ==========================================================================
   //  Gestion des events
   // ==========================================================================
+  onremoveKey (data) {
+    store.commit('KEYCHAIN_REMOVED', data.plate)
+  }
   onupdateMyPhoneNumber (data) {
     store.commit('SET_MY_PHONE_NUMBER', data.myPhoneNumber)
+  }
+  onsetTime (data) {
+    store.commit('SET_TIME', data.time)
   }
   onupdateMessages (data) {
     store.commit('SET_MESSAGES', data.messages)
@@ -177,34 +185,31 @@ class PhoneAPI {
   onupdateBankbalance (data) {
     store.commit('SET_BANK_AMONT', data.banking)
   }
+  onassignVehicleKeys (data) {
+    store.commit('KEYCHAIN_SET', data.vehicleKeys)
+  }
+  onassignVehicleKey (data) {
+    store.commit('KEYCHAIN_ADD', data.plate)
+  }
+  onsetSkill (data) {
+    store.commit('SET_SKILL', {skill: data.skill, value: data.value})
+  }
+  onsetSkills (data) {
+    store.commit('SET_SKILLS', data.skills)
+  }
   onupdateBourse (data) {
     store.commit('SET_BOURSE_INFO', data.bourse)
   }
   // Call
   async startCall (numero, extraData = undefined) {
-    if (USE_VOICE_RTC === true) {
-      const rtcOffer = await this.voiceRTC.prepareCall()
-      return this.post('startCall', { numero, rtcOffer, extraData })
-    } else {
-      return this.post('startCall', { numero, extraData })
-    }
+    return this.post('startCall', { numero, extraData })
   }
   async acceptCall (infoCall) {
-    if (USE_VOICE_RTC === true) {
-      const rtcAnswer = await this.voiceRTC.acceptCall(infoCall)
-      return this.post('acceptCall', { infoCall, rtcAnswer })
-    } else {
-      return this.post('acceptCall', { infoCall })
-    }
+    return this.post('acceptCall', { infoCall })
   }
   async rejectCall (infoCall) {
     return this.post('rejectCall', { infoCall })
   }
-
-  async notififyUseRTC (use) {
-    return this.post('notififyUseRTC', use)
-  }
-
   onwaitingCall (data) {
     store.commit('SET_APPELS_INFO_IF_EMPTY', {
       ...data.infoCall,
@@ -212,23 +217,9 @@ class PhoneAPI {
     })
   }
   onacceptCall (data) {
-    if (USE_VOICE_RTC === true) {
-      if (data.initiator === true) {
-        this.voiceRTC.onReceiveAnswer(data.infoCall.rtcAnswer)
-      }
-      this.voiceRTC.addEventListener('onCandidate', (candidates) => {
-        this.post('onCandidates', { id: data.infoCall.id, candidates })
-      })
-    }
     store.commit('SET_APPELS_INFO_IS_ACCEPTS', true)
   }
-  oncandidatesAvailable (data) {
-    this.voiceRTC.addIceCandidates(data.candidates)
-  }
   onrejectCall (data) {
-    if (this.voiceRTC !== null) {
-      this.voiceRTC.close()
-    }
     store.commit('SET_APPELS_INFO', null)
   }
   // Tchat Event
@@ -298,15 +289,17 @@ class PhoneAPI {
     Vue.notify({
       title: store.getters.IntlString(data.title, ''),
       message: store.getters.IntlString(data.message),
-      icon: 'twitter',
-      backgroundColor: '#e0245e80'
+      icon: 'fab fa-twitter',
+      backgroundColor: '#e0245e80',
+      duration: 6000
     })
   }
   ontwitter_showSuccess (data) {
     Vue.notify({
       title: store.getters.IntlString(data.title, ''),
       message: store.getters.IntlString(data.message),
-      icon: 'twitter'
+      icon: 'fab fa-twitter',
+      duration: 6000
     })
   }
 
@@ -335,6 +328,9 @@ class PhoneAPI {
     }
   }
 
+  onSetResourceName ({ resourceName }) {
+    BASE_URL = 'https://' + resourceName + '/'
+  }
 }
 
 const instance = new PhoneAPI()

@@ -45,11 +45,11 @@ if (process.env.NODE_ENV !== 'production') {
   state.contacts = [{
     id: 2,
     number: '336-4557',
-    display: 'John doe'
+    display: 'Test Contact 1'
   },
   {
     id: 4,
     number: '336-4553',
-    display: 'Nop user'
+    display: 'Test Contact 2'
   }]
 }

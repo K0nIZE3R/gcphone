@@ -6,7 +6,7 @@
     </div>
 
     <textarea ref="copyTextarea" class="copyTextarea"/>
-    
+
     <div id='sms_list' @contextmenu.prevent="showOptions">
         <div class="sms" v-bind:class="{ select: key === selectMessage}" v-for='(mess, key) in messagesList' v-bind:key="mess.id"
           @click.stop="onActionMessage(mess)"
@@ -16,7 +16,7 @@
               v-bind:class="{ sms_other : mess.owner === 0}" :style="colorSmsOwner[mess.owner]">
               <img v-if="isSMSImage(mess)" @click.stop="onActionMessage(mess)" class="sms-img" :src="mess.message">
               <span v-else @click.stop="onActionMessage(mess)" >{{mess.message}}</span>
-                
+
                 <span @click.stop="onActionMessage(mess)" ><timeago class="sms_time" :since='mess.time' :auto-update="20" :style="colorSmsOwner[mess.owner]"></timeago></span>
             </span>
         </div>
@@ -78,7 +78,6 @@ export default {
       })
     },
     quit () {
-      // this.$router.push({path: '/messages'})
       this.$router.go(-1)
     },
     onUp: function () {
@@ -104,7 +103,7 @@ export default {
       if (this.selectMessage !== -1) {
         this.onActionMessage(this.messagesList[this.selectMessage])
       } else {
-        this.$phoneAPI.getReponseText().then(data => {
+        this.$phoneAPI.getReponseText({title: 'Message text'}).then(data => {
           let message = data.text.trim()
           if (message !== '') {
             this.sendMessage({
@@ -129,7 +128,6 @@ export default {
     },
     async onActionMessage (message) {
       try {
-        // let message = this.messagesList[this.selectMessage]
         let isGPS = /(-?\d+(\.\d+)?), (-?\d+(\.\d+)?)/.test(message.message)
         let hasNumber = /#([0-9]+)/.test(message.message)
         let isSMSImage = this.isSMSImage(message)
@@ -259,7 +257,7 @@ export default {
         if (this.enableTakePhoto) {
           choix = [
             {id: 1, title: this.IntlString('APP_MESSAGE_SEND_GPS'), icons: 'fa-location-arrow'},
-            {id: 2, title: this.IntlString('APP_MESSAGE_SEND_PHOTO'), icons: 'fa-picture-o'},
+            {id: 2, title: this.IntlString('APP_MESSAGE_SEND_PHOTO'), icons: 'fa-camera'},
             {id: -1, title: this.IntlString('CANCEL'), icons: 'fa-undo'}
           ]
         }
@@ -353,7 +351,7 @@ export default {
     left: 0;
     right: 0;
     height: calc(100% - 20px);
-    background-color: #DDD;    
+    background-color: #DDD;
 }
 #sms_contact{
     background-color: #4CAF50;
@@ -472,7 +470,7 @@ export default {
     margin-right: 10px;
 }
 .sms_send svg{
-    margin: 10px; 
+    margin: 10px;
     width: 36px;
     height: 36px;
     fill: #C0C0C0;

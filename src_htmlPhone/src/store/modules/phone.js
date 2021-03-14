@@ -5,14 +5,16 @@ const state = {
   show: process.env.NODE_ENV !== 'production',
   tempoHide: false,
   myPhoneNumber: '###-####',
+  currentTime: '20:00',
   background: JSON.parse(window.localStorage['gc_background'] || null),
   coque: JSON.parse(window.localStorage['gc_coque'] || null),
+  ringtone: JSON.parse(window.localStorage['gc_ringtone'] || null),
   zoom: window.localStorage['gc_zoom'] || '100%',
   volume: parseFloat(window.localStorage['gc_volume']) || 1,
   mouse: window.localStorage['gc_mouse'] === 'true',
-  lang: window.localStorage['gc_language'],
+  lang: 'en_US',
   config: {
-    reseau: 'Gannon',
+    reseau: 'RPUK',
     useFormatNumberFrance: false,
     apps: [],
     themeColor: '#2A56C6',
@@ -27,6 +29,7 @@ const getters = {
   show: ({ show }) => show,
   tempoHide: ({ tempoHide }) => tempoHide,
   myPhoneNumber: ({ myPhoneNumber }) => myPhoneNumber,
+  currentTime: ({ currentTime }) => currentTime,
   volume: ({ volume }) => volume,
   enableTakePhoto: ({ config }) => config.enableTakePhoto === true,
   background: ({ background, config }) => {
@@ -60,7 +63,20 @@ const getters = {
     }
     return coque
   },
+  ringtone: ({ ringtone, config }) => {
+    if (ringtone === null) {
+      if (config && config.ringtone_default !== undefined) {
+        return config.ringtone_default
+      }
+      return {
+        label: 'Default',
+        value: 'iphone.ogg'
+      }
+    }
+    return ringtone
+  },
   coqueLabel: (state, getters) => getters.coque.label,
+  ringtoneLabel: (state, getters) => getters.ringtone.label,
   zoom: ({ zoom }) => zoom,
   useMouse: ({ mouse }) => mouse,
   config: ({ config }) => config,
@@ -133,14 +149,13 @@ const actions = {
     window.localStorage['gc_coque'] = JSON.stringify(coque)
     commit('SET_COQUE', coque)
   },
+  setRingtone ({ commit }, ringtone) {
+    window.localStorage['gc_ringtone'] = JSON.stringify(ringtone)
+    commit('SET_RINGTONE', ringtone)
+  },
   setVolume ({ commit }, volume) {
     window.localStorage['gc_volume'] = volume
     commit('SET_VOLUME', volume)
-  },
-  setLanguage ({ commit }, lang) {
-    window.localStorage['gc_language'] = lang
-    Vue.prototype.$timeago.setCurrentLocale(lang)
-    commit('SET_LANGUAGE', lang)
   },
   setMouseSupport ({ commit }, value) {
     window.localStorage['gc_mouse'] = value
@@ -155,7 +170,7 @@ const actions = {
     dispatch('setVolume', 1)
     dispatch('setBackground', getters.config.background_default)
     dispatch('setCoque', getters.config.coque_default)
-    dispatch('setLanguage', 'fr_FR')
+    dispatch('setRingtone', getters.config.ringtone_default)
   }
 }
 
@@ -179,11 +194,17 @@ const mutations = {
   SET_MY_PHONE_NUMBER (state, myPhoneNumber) {
     state.myPhoneNumber = myPhoneNumber
   },
+  SET_TIME (state, time) {
+    state.currentTime = time
+  },
   SET_BACKGROUND (state, background) {
     state.background = background
   },
   SET_COQUE (state, coque) {
     state.coque = coque
+  },
+  SET_RINGTONE (state, ringtone) {
+    state.ringtone = ringtone
   },
   SET_ZOOM (state, zoom) {
     state.zoom = zoom

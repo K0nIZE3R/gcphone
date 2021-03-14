@@ -7,7 +7,7 @@
       :style="style(notif)"
     >
       <div class="title">
-        <i v-if="notif.icon" class="fa" :class="'fa-' + notif.icon"/> {{notif.title}}
+        <i v-if="notif.icon" :class="notif.icon" /> {{notif.title}}
       </div>
       <div class="message">{{notif.message}}</div>
     </div>
