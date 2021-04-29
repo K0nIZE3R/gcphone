@@ -1,6 +1,16 @@
 # gcphone
 
-Hawaii Beach edition
+Hawaii Beach edition. It's probably not going to work out of the box for you, but use the source and change it to your environment.
+
+## Features
+
+- Working gallery & camera app
+- Many customizations & optimizations
+- Custom ringtone support
+- Improved SQL performance
+- Improved context menus
+- Better stock market app
+- More I can't remember (browse source yourself)
 
 ## How to build / dev
 
